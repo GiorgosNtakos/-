@@ -1,0 +1,594 @@
+CREATE TABLE Efimerida (
+
+onoma VARCHAR( 25 ) NOT NULL DEFAULT 'unknown',
+
+syxnothta_ekdoshs ENUM('Kathe mera','ebdomadiea','mhnhaia'),
+
+idioktitis VARCHAR( 50	 ) NOT NULL  DEFAULT 'unknown',
+
+PRIMARY KEY (onoma)
+
+);
+
+CREATE TABLE Ergazomenos (
+
+email VARCHAR( 50 ) NOT NULL DEFAULT 'unknown',
+
+name VARCHAR( 25 ) DEFAULT 'unknown',
+
+surname VARCHAR( 25 ) DEFAULT 'unknown',
+
+misthos_ana_ergazomeno FLOAT(10),
+
+imerominia_proslipsis DATE,
+Username VARCHAR(25) NOT NULL,
+Password VARCHAR(25) NOT NULL,
+rolos enum('dhmosiografos','dioikitikos','arxisintaktis','ekdotis') ,
+
+
+PRIMARY KEY (email)
+
+
+);
+
+CREATE TABLE Ergasia (
+
+onoma_ergasias VARCHAR( 25 ) NOT NULL DEFAULT 'unknown',
+
+email_ergazomenou VARCHAR( 50 ) DEFAULT 'unknown',
+
+PRIMARY KEY(onoma_ergasias,email_ergazomenou),
+CONSTRAINT onoma_efimeridas
+
+FOREIGN KEY(onoma_ergasias) REFERENCES Efimerida(onoma)
+
+ON DELETE CASCADE ON UPDATE CASCADE,
+
+CONSTRAINT email_ergazomenou
+FOREIGN KEY(email_ergazomenou) REFERENCES Ergazomenos(email)
+
+ON DELETE CASCADE ON UPDATE CASCADE
+
+);
+
+CREATE TABLE Dioikitikos (
+
+email VARCHAR( 50 ),
+
+odos VARCHAR( 25 ),
+
+poli VARCHAR( 25 ),
+
+kathikonta ENUM('Secretary','Logistics'),
+
+arithmos INT(15),
+PRIMARY KEY(email),
+CONSTRAINT email_dioikitikou
+
+FOREIGN KEY(email) REFERENCES Ergazomenos(email)
+
+ON DELETE CASCADE ON UPDATE CASCADE
+
+);
+
+
+CREATE TABLE Tilefwno (
+
+tilefwno VARCHAR(50) NOT NULL,
+
+dioikitikos VARCHAR( 50 ) NOT NULL DEFAULT 'unknown',
+
+PRIMARY KEY(tilefwno,dioikitikos),
+
+CONSTRAINT tolefwno_dioikitikou
+
+FOREIGN KEY(dioikitikos) REFERENCES Dioikitikos(email)
+
+ON DELETE CASCADE  ON UPDATE CASCADE
+
+);
+
+
+CREATE TABLE Arxisintaktis (
+
+email VARCHAR( 50 ),
+
+PRIMARY KEY(email),
+CONSTRAINT email_arxisintakti
+FOREIGN KEY(email) REFERENCES Ergazomenos(email)
+
+ON DELETE CASCADE ON UPDATE CASCADE
+
+);
+
+
+CREATE TABLE Dimosiografos (
+
+email VARCHAR( 50 ),
+
+proipiresia INT(5),
+
+biografiko TEXT,
+
+PRIMARY KEY(email),
+CONSTRAINT email_dimosiografou
+
+FOREIGN KEY(email) REFERENCES Ergazomenos(email)
+
+ON DELETE CASCADE ON UPDATE CASCADE
+
+);
+
+
+
+CREATE TABLE Katigoria (
+
+kwdikos INT( 25 ) NOT NULL ,
+
+onoma VARCHAR(25) DEFAULT 'Unknown',
+
+perigrafi TEXT,
+
+goneas INT( 25 ),
+PRIMARY KEY(kwdikos),
+CONSTRAINT kwdikos_gwnea
+FOREIGN KEY(goneas) REFERENCES Katigoria(kwdikos)
+
+ON DELETE CASCADE ON UPDATE CASCADE
+
+);
+
+
+
+CREATE TABLE Ekdotis (
+
+email VARCHAR( 50 ),
+
+PRIMARY KEY(email),
+CONSTRAINT email_ekdoti
+
+FOREIGN KEY(email) REFERENCES Ergazomenos(email)
+
+ON DELETE CASCADE ON UPDATE CASCADE
+
+);
+
+
+CREATE TABLE Fillo (
+
+arithmos_fillou INT(5) NOT NULL,
+
+onoma_ef VARCHAR( 25 ) NOT NULL DEFAULT 'unknown',
+
+email_arx VARCHAR( 50 ) NOT NULL DEFAULT 'unknown',
+
+imerominia_kikloforias DATE,
+
+selides INT(5) NOT NULL DEFAULT '30',
+PRIMARY KEY(arithmos_fillou,email_arx,onoma_ef),
+CONSTRAINT onoma_efimerida
+FOREIGN KEY(onoma_ef) REFERENCES Efimerida(onoma)
+
+ON DELETE CASCADE ON UPDATE CASCADE
+,
+CONSTRAINT arxiemail
+FOREIGN KEY(email_arx) REFERENCES Arxisintaktis(email)
+
+ON DELETE CASCADE ON UPDATE CASCADE
+
+);
+
+
+CREATE TABLE Arthro (
+
+path VARCHAR(50) NOT NULL DEFAULT 'unknown',
+
+arithmos_fillou INT(5) NOT NULL,
+
+kwdikos INT( 25 ) NOT NULL,
+
+email_dim VARCHAR( 50),
+email_arx VARCHAR( 50 ),
+titlos VARCHAR( 25 ),
+ektasi_selidwn INT(5),
+perilipsi TEXT,
+fwto TEXT,
+ord INT(50) NOT NULL,
+katastash ENUM('perase','aporifthke','ekkremi'),
+PRIMARY KEY(path,arithmos_fillou,kwdikos,email_dim,email_arx),
+CONSTRAINT arith_fillou
+FOREIGN KEY(arithmos_fillou) REFERENCES Fillo(arithmos_fillou)
+
+ON DELETE CASCADE ON UPDATE CASCADE
+,
+CONSTRAINT kwdikos_katigorias
+FOREIGN KEY(kwdikos) REFERENCES Katigoria(kwdikos)
+
+ON DELETE CASCADE ON UPDATE CASCADE
+,
+CONSTRAINT mail_dimosiografou
+FOREIGN KEY(email_dim) REFERENCES Dimosiografos(email)
+
+ON DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT mail_arxisintakti
+FOREIGN KEY(email_arx) REFERENCES Arxisintaktis(email)
+
+ON DELETE CASCADE ON UPDATE CASCADE
+
+
+);
+
+
+CREATE TABLE Leksis_kleidia (
+
+leksis VARCHAR(200) NOT NULL,
+
+arthro VARCHAR(50),
+PRIMARY KEY(leksis,arthro),
+CONSTRAINT diadromi_arthrou
+FOREIGN KEY(arthro) REFERENCES Arthro(path)
+
+ON DELETE CASCADE ON UPDATE CASCADE
+
+);
+
+
+
+
+CREATE TABLE Ipoboli (
+
+email_arx VARCHAR( 50 ) NOT NULL,
+
+
+email_dim VARCHAR( 50 ) NOT NULL,
+imerominia DATE,
+path VARCHAR(50) NOT NULL,
+PRIMARY KEY(email_arx,email_dim,path),
+CONSTRAINT dimosiografos_mail
+FOREIGN KEY(email_dim) REFERENCES Dimosiografos(email)
+
+ON DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT arxisintaktis_mail
+FOREIGN KEY(email_arx) REFERENCES Arxisintaktis(email)
+
+ON DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT path_arthrou
+FOREIGN KEY(path) REFERENCES Arthro(path)
+
+ON DELETE CASCADE ON UPDATE CASCADE
+
+);
+
+
+CREATE TABLE Kathorismos (
+email VARCHAR(50) NOT NULL DEFAULT 'Unknown',
+arith_fillou INT(5),
+arith_antitipwn INT(5),
+stoixeia_pwlisis TEXT,
+PRIMARY KEY(email,arith_fillou),
+CONSTRAINT mail_ekdoti
+FOREIGN KEY(email) REFERENCES Ekdotis(email)
+
+ON DELETE CASCADE ON UPDATE CASCADE,
+
+CONSTRAINT num_fillou
+FOREIGN KEY(arith_fillou) REFERENCES Fillo(arithmos_fillou)
+
+ON DELETE CASCADE ON UPDATE CASCADE
+
+);
+
+CREATE TABLE Elegxos (
+email VARCHAR(50) NOT NULL DEFAULT 'Unknown',
+path VARCHAR(50)  NOT NULL DEFAULT 'Unknown',
+PRIMARY KEY(email,path),
+CONSTRAINT email_arx
+FOREIGN KEY(email) REFERENCES Arxisintaktis(email)
+
+ON DELETE CASCADE ON UPDATE CASCADE,
+
+CONSTRAINT path_art
+FOREIGN KEY(path) REFERENCES Arthro(path)
+
+ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+CREATE TABLE Eisagwgi_arx (
+email VARCHAR(50) NOT NULL DEFAULT 'Unknown',
+kwdikos INT( 25 ),
+PRIMARY KEY(email,kwdikos),
+CONSTRAINT email_arx_elegx
+FOREIGN KEY(email) REFERENCES Elegxos(email)
+ON DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT katigoria_kwd
+FOREIGN KEY(kwdikos) REFERENCES Katigoria(kwdikos)
+ON DELETE CASCADE ON UPDATE CASCADE
+
+);
+
+
+CREATE TABLE Elegxos_misthou (
+email VARCHAR(50) NOT NULL DEFAULT 'Unknown',
+
+
+misthos_sinolika FLOAT(20) NOT NULL,
+PRIMARY KEY(email),
+CONSTRAINT email_egazomenou
+FOREIGN KEY(email) REFERENCES Ergazomenos(email)
+
+ON DELETE CASCADE ON UPDATE CASCADE
+
+);
+
+
+
+CREATE TABLE Orismos (
+email_ekd VARCHAR(50) NOT NULL DEFAULT 'Unknown',
+email_arx VARCHAR(50) NOT NULL DEFAULT 'Unknown',
+PRIMARY KEY(email_ekd),
+CONSTRAINT ekdotis_mail
+FOREIGN KEY(email_ekd) REFERENCES Ekdotis(email)
+
+ON DELETE CASCADE ON UPDATE CASCADE,
+
+CONSTRAINT arxisuntakths_mail
+FOREIGN KEY(email_arx) REFERENCES Arxisintaktis(email)
+
+ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+
+CREATE TABLE Epeksergasia_stoixeiwn (
+email VARCHAR(50) NOT NULL DEFAULT 'Unknown',
+onoma VARCHAR( 25 ),
+PRIMARY KEY(email),
+CONSTRAINT ekdotis_email
+FOREIGN KEY(email) REFERENCES Ekdotis(email)
+
+ON DELETE CASCADE ON UPDATE CASCADE
+,
+CONSTRAINT efimerida_onoma
+FOREIGN KEY(onoma) REFERENCES Efimerida(onoma)
+
+ON DELETE CASCADE ON UPDATE CASCADE
+
+);
+
+
+CREATE TABLE Eisagwgi (
+email VARCHAR(50) NOT NULL DEFAULT 'Unknown',
+arith_fillou INT(5) NOT NULL,
+epistrafenta_filla INT(5),
+PRIMARY KEY(email,arith_fillou),
+CONSTRAINT email_dioik
+FOREIGN KEY(email) REFERENCES Dioikitikos(email)
+ON DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT ar_fil
+FOREIGN KEY(arith_fillou) REFERENCES Fillo(arithmos_fillou)
+ON DELETE CASCADE ON UPDATE CASCADE
+
+);
+INSERT INTO Efimerida VALUES
+('Kathimerinh','Kathe mera','Giwrgos Ntakos'),
+('Kyriakatikh','ebdomadiea','Panagiwths Syriopoylos'),
+('Makelio','ebdomadiea','Xrhstos Mpoylafenths');
+
+INSERT INTO Ergazomenos VALUES
+('giorgos_siskos@hotmail.com','Giwrgos','Siskos','1250','2016-03-28','gsis','pass','dhmosiografos'),
+('nikosapto7@hotmail.com','Nikos','Aptosoglou','1250','2014-11-08','nikosapto7','pass','dhmosiografos'),
+('Chrisiordanidis@gmail.com','Christoforos','Iordanidis','1250','2019-05-25','chrisd','pass','dhmosiografos'),
+('BioletaNikolaou@yahoo.com','Bioleta','Nikolaou','1750','2016-03-28','alkina','pass','dioikitikos'),
+('AlkhsAnastasakhs@hotmail.com','Alkhs','Anastasakhs','1750','2017-09-09','alk','pass','dioikitikos'),
+('Agathi-Gkika@yahoo.com','Agathi','Gkika','1750','2013-12-06','agatha','pass','dioikitikos'),
+('XristinaXyno@hotmail.com','Xristina','Xynogala','2500','2012-02-22','christi','pass','arxisintaktis'),
+('MixalhsMhtsios@hotmail.com','Mixalhs','Mhtsios','2500','2014-12-06','mixalio','pass','arxisintaktis'),
+('GiwrgosMak@hotmail.com','Giwrgos','Makrhs','2500','2019-06-25','gmak','pass','arxisintaktis'),
+('StefanosXios@hotmail.com','Stefanos','Xios','3000','2013-12-08','stefx','pass','ekdotis'),
+('IwannhsTsilis@hotmail.com','Iwannhs','Tsiliggirhs','3000','2016-12-06','ioda','pass','ekdotis'),
+('TakhsTsoukalas@hotmail.com','Takhs','Tsoukalas','3000','2019-07-25','tatsou','pass','ekdotis');
+
+INSERT INTO Dimosiografos VALUES
+('giorgos_siskos@hotmail.com','11','Biografiko:Gennithke to 1979 sthn Agia Paraskeuh Attikhs.Einai teleiofhtos ths dhmosiografikhs sxolhs athinas me metaptuxiako se koiniologikes episthmes kai politika'),
+('nikosapto7@hotmail.com','5','Biografiko:Gennhmenos to 1970 sthn Kalamaria ths Thessalonikhs.Einai teleiofhtos ths stratiwtikhs sxolhs Eyelpidwn kai ths Sxolhs Psyxologias.'),
+('Chrisiordanidis@gmail.com','6','Biografiko:Gennhmenos to 1982 sto Peristerh ths Athinas.Einai teliofhtos ths oikonomikhs sxolhs AsOE me bathmo arista.Epipleon exei kanei master sta oikonomika sto panepisthmio ths Amerikhs kai teleiwsei kai dhmosiografikh sxolh.Telos exei diakekrithei gia polla toy arthra.');
+
+INSERT INTO Arxisintaktis VALUES
+('XristinaXyno@hotmail.com'),
+('MixalhsMhtsios@hotmail.com'),
+('GiwrgosMak@hotmail.com');
+
+INSERT INTO Dioikitikos VALUES
+('BioletaNikolaou@yahoo.com','Zaimh','Agia Paraskeyh','Secretary','12'),
+('AlkhsAnastasakhs@hotmail.com','Krhths','Xalandri','Logistics','18'),
+('Agathi-Gkika@yahoo.com','Alkamenoy','Khfisia','Secretary','24');
+
+INSERT INTO Ekdotis VALUES
+('StefanosXios@hotmail.com'),
+('IwannhsTsilis@hotmail.com'),
+('TakhsTsoukalas@hotmail.com');
+
+
+INSERT INTO Tilefwno VALUES
+('6978561391','BioletaNikolaou@yahoo.com'),
+('6983185690','AlkhsAnastasakhs@hotmail.com'),
+('6943156532','Agathi-Gkika@yahoo.com');
+
+INSERT INTO Ergasia VALUES
+('Kathimerinh','giorgos_siskos@hotmail.com'),
+('Kathimerinh','BioletaNikolaou@yahoo.com'),
+('Kathimerinh','XristinaXyno@hotmail.com'),
+('Kathimerinh','TakhsTsoukalas@hotmail.com'),
+('Kyriakatikh','nikosapto7@hotmail.com'),
+('Kyriakatikh','AlkhsAnastasakhs@hotmail.com'),
+('Kyriakatikh','MixalhsMhtsios@hotmail.com'),
+('Kyriakatikh','IwannhsTsilis@hotmail.com'),
+('Makelio','Chrisiordanidis@gmail.com'),
+('Makelio','Agathi-Gkika@yahoo.com'),
+('Makelio','GiwrgosMak@hotmail.com'),
+('Makelio','StefanosXios@hotmail.com');
+
+INSERT INTO Fillo VALUES
+('25','Kathimerinh','XristinaXyno@hotmail.com','2019-04-28','50'),
+('30','Kathimerinh','XristinaXyno@hotmail.com','2019-05-02','65'),
+('22','Kyriakatikh','MixalhsMhtsios@hotmail.com','2019-03-07','90'),
+('35','Kyriakatikh','MixalhsMhtsios@hotmail.com','2019-06-06','100'),
+('29','Makelio','GiwrgosMak@hotmail.com','2019-02-22','70'),
+('32','Makelio','GiwrgosMak@hotmail.com','2019-03-15','80');
+
+INSERT INTO Arthro VALUES
+('C:\Users\Articles\Submitted\Article25a.doc','25','1','giorgos_siskos@hotmail.com','XristinaXyno@hotmail.com','To megalo keno ths Meshs','2','Diafores koinonikes anisotites sthn athina kai to pws teinei na eksalifthei h koinownikh mesaia taksi','Fwtografies apo astegous sta stena ths athinas kai fwtografies statistikwn aykshshs twn ftwxwn','1','aporifthke'),
+('C:\Users\Articles\Submitted\Article30a.doc','30','1','giorgos_siskos@hotmail.com','XristinaXyno@hotmail.com','Liges oi didaktikes wres sta sxoleia','4','H ypoutgos paideias Nikh keramews dinei mia syntomh sunenteuksh gia zhthmata ths ekpaideutikhs epikairothtas','Fwtografia ths idias ths Ypoyrgoy','5','perase'),
+('C:\Users\Articles\Submitted\Article22a.doc','22','2','nikosapto7@hotmail.com','MixalhsMhtsios@hotmail.com','Otan h mnhmh apotugxanei','3','To problhma ths lhths apasxoloyse thn anthropinh skepsi apo ta poly palia xronia.Th lhthh th sunantame sth logotexneia se keimena opws ta Omirika Eph,mexri ta neotera erga poihshs kai pezografias.H diadikasia ths apotyxias ths mnhmhs,poy den ofeiletai se pathologika aitia,legetai lhthh','Diafares fwtografies epi tou thematos','7','ekkremi'),
+('C:\Users\Articles\Submitted\Article35a.doc','35','5','nikosapto7@hotmail.com','MixalhsMhtsios@hotmail.com','Sto kokkino h tourkikh proklhtikothta','3','Emplokes,yperpthseis kai 43 parabiaseis toy enaeriou xwroy.Ennea parabiaseis htan yperpthseis poy pragmatopoihsan tourkika F-16 panw apo Oinouses,Panagia kai Leipsous','Diafores photografies ellhnikwn F-16 Enw vra drashs','8','aporifthke'),
+('C:\Users\Articles\Submitted\Article29a.doc','29','6','Chrisiordanidis@gmail.com','GiwrgosMak@hotmail.com','H germanikh metabash se neo oikonomiko montelo','2','To neo dedomeno sthn europaikh oikonomikh sygkiria einai anamfibola h krish sthn opoia exei mpei h germanikh biomhxanikh mhxanh exei plhgei bathia kai domika apo tis megales geopolitikes allages poy einai se ekseliksi','Fwtografies statistikwn me ta oikonomika diaforwn germanikwn biomhxaniwn','3','perase'),
+('C:\Users\Articles\Submitted\Article32a.doc','32','6','Chrisiordanidis@gmail.com','GiwrgosMak@hotmail.com','H anorthodoksi Oikonomia','5','H Europaikh anorthodoksos oikonomia o programmtismenos thanatos ths Europaikhs Enwhshs kai h dysxeris ths oikonomia thn teleutaia pentaetia','Fotografies statistikwn ths oikonomias diaforwn europaikwn xwrwn alla kai ths katastashs sthn sunolikh Europh','2','perase');
+
+INSERT INTO Leksis_kleidia VALUES
+('ftwxeia,mesaia taksi.koinonia,anisothtes','C:\Users\Articles\Submitted\Article25a.doc'),
+('mathhsh,sxoleia,ekpaideutiko susthma,ekpaideush','C:\Users\Articles\Submitted\Article30a.doc'),
+('mnhmh,egkefalos,lhthh,neuriko shstuma,skepsi','C:\Users\Articles\Submitted\Article22a.doc'),
+('parabiaseis,enarios xwros,symplokes,F-16,oplismena','C:\Users\Articles\Submitted\Article35a.doc'),
+('germanikh oikonomia,ptwsh,biomhxania,xrhmathstirio','C:\Users\Articles\Submitted\Article29a.doc'),
+('Eurwoph,Eyropaikh Enosh,Oikonomia,Statistika Stoixeia','C:\Users\Articles\Submitted\Article32a.doc');
+
+INSERT INTO Katigoria VALUES
+
+(1,'Konwnika','Diafora zhthmata gia thn koinia ths xwras mas kai genika tou kosmou','1'),
+(2,'Psuxologika','Diafora themata gia thn psyxologia tou anthropou kai to pws epireazetai auth','2'),
+(3,'Politika','Diafora themata gia thn politikh olou toy kosmoy','3'),
+(4,'Esoterikh Politikh','Ola ta gegonota sto thema ths politikhs sthn xwra mas','3'),
+(5,'Eksoterikh politikh:EllhnoTourkikes Sxeseis','Ola ta gegononta gia tis sxeseis twn 2 geitonikwn xwrwn Elladas Tourkias','3'),
+(6,'Oikonomika','Plhrofories kai anafores gia thn oikonmia oloy tou kosmoy','6');
+
+INSERT INTO Kathorismos VALUES
+('TakhsTsoukalas@hotmail.com','30','1500','Poylithikan 1200 antitupa'),
+('IwannhsTsilis@hotmail.com','22','2000','Poylithikan 1650 antitupa'),
+('StefanosXios@hotmail.com','29','1000','Poylithikan 800 antitupa'),
+('TakhsTsoukalas@hotmail.com','25','2500','Poylithikan 2350 antitupa'),
+('IwannhsTsilis@hotmail.com','35','3000','Poylithikan ola ta antitupa'),
+('StefanosXios@hotmail.com','32','2800','Poylithikan 2650 antitupa');
+
+INSERT INTO Elegxos VALUES
+('XristinaXyno@hotmail.com','C:\Users\Articles\Submitted\Article25a.doc'),
+('XristinaXyno@hotmail.com','C:\Users\Articles\Submitted\Article30a.doc'),
+('MixalhsMhtsios@hotmail.com','C:\Users\Articles\Submitted\Article22a.doc'),
+('MixalhsMhtsios@hotmail.com','C:\Users\Articles\Submitted\Article35a.doc'),
+('GiwrgosMak@hotmail.com','C:\Users\Articles\Submitted\Article29a.doc'),
+('GiwrgosMak@hotmail.com','C:\Users\Articles\Submitted\Article32a.doc');
+
+INSERT INTO Eisagwgi_arx VALUES
+('XristinaXyno@hotmail.com','1'),
+('MixalhsMhtsios@hotmail.com','2'),
+('MixalhsMhtsios@hotmail.com','5'),
+('GiwrgosMak@hotmail.com','6');
+
+INSERT INTO Elegxos_misthou VALUES
+('BioletaNikoPaou@yahoo.com','8800'),
+('AlkhsAnastasakhs@hotmail.com','8800'),
+('Agathi-Gkika@yahoo.com','8800');
+
+
+INSERT INTO Orismos VALUES 
+('StefanosXios@hotmail.com','XristinaXyno@hotmail.com'),
+('IwannhsTsilis@hotmail.com','MixalhsMhtsios@hotmail.com'),
+('TakhsTsoukalas@hotmail.com','GiwrgosMak@hotmail.com');
+
+INSERT INTO Epeksergasia_stoixeiwn VALUES
+('TakhsTsoukalas@hotmail.com','Kathimerinh'),
+('IwannhsTsilis@hotmail.com','Kyriakatikh'),
+('StefanosXios@hotmail.com','Makelio');
+
+INSERT INTO Ipoboli VALUES
+('giorgos_siskos@hotmail.com','C:\Users\Articles\Submitted\Article25a.doc','2019-04-20','XristinaXyno@hotmail.com'),
+('giorgos_siskos@hotmail.com','C:\Users\Articles\Submitted\Article30a.doc','2019-04-28','XristinaXyno@hotmail.com'),
+('nikosapto7@hotmail.com','C:\Users\Articles\Submitted\Article22a.doc','2019-02-28','MixalhsMhtsios@hotmail.com'),
+('nikosapto7@hotmail.com','C:\Users\Articles\Submitted\Article35a.doc','2019-05-27','MixalhsMhtsios@hotmail.com'),
+('Chrisiordanidis@gmail.com','C:\Users\Articles\Submitted\Article29a.doc','2019-02-10','GiwrgosMak@hotmail.com'),
+('Chrisiordanidis@gmail.com','C:\Users\Articles\Submitted\Article32a.doc','2019-03-5','GiwrgosMak@hotmail.com');
+
+INSERT INTO Eisagwgi VALUES
+('BioletaNikolaou@yahoo.com','25','150'),
+('BioletaNikolaou@yahoo.com','30','300'),
+('AlkhsAnastasakhs@hotmail.com','22','350'),
+('AlkhsAnastasakhs@hotmail.com','35','0'),
+('Agathi-Gkika@yahoo.com','29','200'),
+('Agathi-Gkika@yahoo.com','32','150');
+
+/*1o procedure*/
+delimiter $
+create procedure showartro(in arithmos_fillou int,in onoma varchar(25))
+begin
+    declare tempnum int;
+    declare tempname varchar(25);
+    select arithmos_fillou,titlos,email_dim,imerominia_egkrishs,selida_arxi,ektasi_selidwn from Fillo inner join Arthro where arithmos_fillou=number and onoma_ef like name order by Arthro.ord ASC;
+end$
+delimiter ;
+
+/*2o procedure*/
+delimiter $
+create procedure salarycalc(in usr varchar(25))
+begin
+    declare tempdate DATE;
+    declare exp int;
+    declare tempsalary float;
+    select imerominia_proslipsis into tempdate from Ergazomenos where username=usr;
+    set @tempdate = CURDATE() - @tempdate;
+    select proiperesia into exp from dhmosiografos where username=usr;
+    set @exp = proiperesia + exp;
+    select misthos_ana_ergazomeno into tempsalary from Ergazomenos where username=usr;
+    set @tempsalary = @tempsalary + @tempsalary * (0,5 * @exp);
+    update Ergazomenos
+    set 
+        misthos_ana_ergazomeno = @tempsalary
+    where 
+        username = usr;
+end$
+delimiter ;
+
+/*1o trigger*/
+DELIMITER $
+CREATE TRIGGER new_wrkr_sal
+BEFORE INSERT ON Ergazomenos
+FOR EACH ROW
+BEGIN 
+    SET NEW.misthos_ana_ergazomeno=650;
+END $
+DELIMITER ;
+
+/*2o trigger*/
+delimiter $
+create trigger check_EIC
+before insert on Arthro
+for each row
+begin
+    declare tempauth varchar(25);
+    declare temprole enum('dhmosiografos','admin','arxisintaktis','ekdotis');
+    set tempauth = NEW.email_dim;
+    select role into temprole from Ergazomenos where username=tempauth;
+    if @temprole = 'arxisintaktis' then
+        set NEW.katastash = 'perase';
+    end if;
+end $
+delimiter ;
+
+/*3o trigger*/
+delimiter $
+create trigger check_capacity
+before insert on Arthro
+for each row
+begin
+    declare templength int(25);
+    declare tempparent varchar(50);
+    declare tempsum int(10);
+    set @tempparent = NEW.arithmos_fillou;
+    set @templength = NEW.ektasi_selidwn;
+    select sum(selides) into tempsum from Artro where arithmos_fillou=tempparent group by arithmos_fillou;
+    if @tempsum >= arithmos_fillou.ektasi_selidwn then 
+        signal sqlstate value '45000' set
+        message_text = 'To Fyllo einai gemato.H eisagwgh den oloklhrwthke!';
+    end if;
+end$
+delimiter ;
+
